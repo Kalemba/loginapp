@@ -4,23 +4,22 @@ class Interface
 		p "Zarejestruj sie - r"
 		command = gets.chomp
 		case command
-			r = "r"
-			z = "z"
-		when z
+			#r = "r"
+			#z = "z"
+		when "z"
 			p "Podaj nazwe uzytkownika:"
 			user = gets.chomp
 			p "Podaj haslo:"
 			pass = gets.chomp
 
-			unless log_in(user, pass).nil? {
-				current_user = log_in(user, pass)
-				return user_interface
+			unless Account.log_in(user, pass).nil? {
+				current_user = Account.log_in(user, pass)
+				return Interface.new.user_interface
 			}
 		end
-		when r
-			create_user
+		when "r"
+			Account.create_user
 			return start
-		end
 		else
 			p "Nieznana komenda."
 			return start
@@ -36,7 +35,7 @@ class Interface
 		when "s"
 			current_user.create_file
 		when "u"
-			current_user.delete_file
+			current_user.delete_file 
 		when "w"
 			log_out
 		else
@@ -58,17 +57,16 @@ class Account
 
 	public
 
-		def log_in(user, pass)
+		def self.log_in(user, pass)
 			if @@user_pass[user] == pass
 				return @@users_accounts[user]
 			else
 				err_log_in
-				return nil
 			end
 
 		end
 
-		def create_user
+		def self.create_user
 			p "Podaj nazwe dla nowego uzytkownika:"
 			username = gets.chomp
 			if @@user_pass.key?(username)
@@ -79,7 +77,7 @@ class Account
 				p "Powtorz haslo:"
 				pass_2 = gets.chomp
 				if pass_1 == pass_2
-					users_accaunts[username] = Account.new(username, pass_1)
+					@@users_accounts[username] = Account.new(username, pass_1)
 				else
 					p "Blad hasla, podane hasla sa rozne! Sprobuj ponownie."
 					return create_user
@@ -143,4 +141,4 @@ class Account
 
 
 end
-start
+Interface.new.start
